@@ -1,8 +1,12 @@
 <?php
 namespace App\Modules\TopicSection\Models;
 
+use App\Modules\TopicArticle\Models\TopicArticle;
+use App\Modules\TopicCategory\Models\TopicCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TopicSection extends Model
 {
@@ -21,20 +25,23 @@ class TopicSection extends Model
         'slug',
         'description',
         'status',
+        'is_marked'
 
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'is_marked' => 'boolean',
+
     ];
 
-    public function topic_category()
+    public function topic_category(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\TopicCategory\Models\TopicCategory::class, 'topic_category_id');
+        return $this->belongsTo(TopicCategory::class, 'topic_category_id', 'id');
     }
-    public function articles()
+    public function topic_articles(): HasMany
     {
-        return $this->hasMany(\App\Modules\TopicArticle\Models\TopicArticle::class, 'topic_article_section_id');
+        return $this->hasMany(TopicArticle::class, );
     }
 }

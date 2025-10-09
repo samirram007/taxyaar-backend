@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TopicCategoryService implements TopicCategoryServiceInterface
 {
-    protected $resource=[];
+    protected $resource = [];
 
     public function getAll(): Collection
     {
@@ -22,6 +22,7 @@ class TopicCategoryService implements TopicCategoryServiceInterface
 
     public function store(array $data): TopicCategory
     {
+
         return TopicCategory::create($data);
     }
 

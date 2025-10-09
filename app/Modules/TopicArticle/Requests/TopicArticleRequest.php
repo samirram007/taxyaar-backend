@@ -3,6 +3,7 @@
 namespace App\Modules\TopicArticle\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TopicArticleRequest extends FormRequest
 {
@@ -13,20 +14,34 @@ class TopicArticleRequest extends FormRequest
 
     public function rules(): array
     {
+        $connection = env('HELP_CENTER_DB_CONNECTION', 'help_center_db');
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:topic_articles,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:topic_articles,code'],
-            'description' => ['sometimes','required', 'string', 'max:255'],
-            'status' => ['sometimes','required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_articles")
+                    ->where(fn($query) => $query->where('topic_section_id', $this->input('topic_section_id')))
+                    ->ignore($this->route('topic_article')),
+            ],
+            'slug' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_articles")
+                    ->where(fn($query) => $query->where('topic_section_id', $this->input('topic_section_id')))
+                    ->ignore($this->route('topic_article')),
+            ],
+            'description' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'status' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'is_marked' => ['sometimes', 'nullable', 'boolean'],
+            'content' => ['sometimes', 'nullable', 'string'],
+            'author_id' => ['sometimes', 'nullable', 'numeric'],
+            'published_at' => ['sometimes', 'nullable', 'datetime'],
+
+            'topic_section_id' => ['required', 'numeric', "exists:{$connection}.topic_sections,id"],
         ];
-
-        // For update requests, make validation more flexible
-        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('topic_article');
-            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_articles,name,' . $id,];
-            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_articles,code,' . $id,];
-
-        }
 
         return $rules;
     }

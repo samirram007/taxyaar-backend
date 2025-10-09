@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     protected $connection;
 
     public function __construct()
@@ -16,13 +15,16 @@ return new class extends Migration
     {
         Schema::connection($this->connection)->create('topic_sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('topic_category_id');
-            $table->string('name')->unique();
+            $table->unsignedBigInteger('topic_category_id');
+            $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('status')->default('active');
+            $table->boolean('is_marked')->default(false);
 
             $table->timestamps();
+            $table->unique(['topic_category_id', 'name']);
+            $table->unique(['topic_category_id', 'slug']);
         });
     }
 

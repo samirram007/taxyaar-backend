@@ -3,6 +3,7 @@
 namespace App\Modules\TopicCategory\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TopicCategoryRequest extends FormRequest
 {
@@ -13,21 +14,34 @@ class TopicCategoryRequest extends FormRequest
 
     public function rules(): array
     {
+        $connection = env('HELP_CENTER_DB_CONNECTION', 'help_center_db');
+
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:topic_categories,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:topic_categories,code'],
-            'description' => ['sometimes','required', 'string', 'max:255'],
-            'status' => ['sometimes','required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_categories", 'name')->ignore($this->route('topic_category')),
+            ],
+            'slug' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_categories", 'slug')->ignore($this->route('topic_category')),
+            ],
+            'description' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'status' => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('topic_category');
-            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_categories,name,' . $id,];
-            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_categories,code,' . $id,];
+            // $id = $this->route('topic_category');
+            // $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:{$connection}.topic_categories,name,' . $id,];
+            // $rules['slug'] = ['sometimes', 'required', 'string', 'max:255', 'unique:{$connection}.topic_categories,slug,' . $id,];
 
         }
-
+        // dd($rules);
         return $rules;
     }
 

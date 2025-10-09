@@ -16,7 +16,9 @@ class TopicCategoryController extends Controller
 {
     use ApiResponseTrait;
 
-    public function __construct(protected TopicCategoryServiceInterface $service) {}
+    public function __construct(protected TopicCategoryServiceInterface $service)
+    {
+    }
 
     public function index(): SuccessCollection
     {
@@ -27,29 +29,30 @@ class TopicCategoryController extends Controller
     public function show(int $id): SuccessResource
     {
         $data = $this->service->getById($id);
-        return  new TopicCategoryResource($data);
+        return new TopicCategoryResource($data);
     }
 
     public function store(TopicCategoryRequest $request): SuccessResource
     {
+        //dd($request->all());
         $data = $this->service->store($request->validated());
-       return  new TopicCategoryResource($data, $messages='TopicCategory created successfully');
+        return new TopicCategoryResource($data, $messages = 'TopicCategory created successfully');
     }
 
     public function update(TopicCategoryRequest $request, int $id): SuccessResource
     {
         $data = $this->service->update($request->validated(), $id);
-        return  new TopicCategoryResource($data, $messages='TopicCategory updated successfully');
+        return new TopicCategoryResource($data, $messages = 'TopicCategory updated successfully');
     }
 
-        public function destroy(int $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
 
-        $result=$this->service->delete($id);
+        $result = $this->service->delete($id);
         return new JsonResponse([
             'status' => $result,
             'code' => 204,
-            'message' => $result?'TopicCategory deleted successfully':'TopicCategory not found',
+            'message' => $result ? 'TopicCategory deleted successfully' : 'TopicCategory not found',
         ]);
     }
 }

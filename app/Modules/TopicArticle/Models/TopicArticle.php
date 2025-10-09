@@ -1,6 +1,8 @@
 <?php
 namespace App\Modules\TopicArticle\Models;
 
+use App\Modules\TopicCategory\Models\TopicCategory;
+use App\Modules\TopicSection\Models\TopicSection;
 use App\Modules\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,12 +21,17 @@ class TopicArticle extends Model
         'title',
         'slug',
         'content',
+        'is_marked',
+
+
     ];
 
     protected $casts = [
-        'created_at'   => 'datetime',
-        'updated_at'   => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
         'published_at' => 'datetime',
+        'is_marked' => 'boolean',
+
     ];
 
     public function __construct(array $attributes = [])
@@ -34,17 +41,17 @@ class TopicArticle extends Model
     }
     public function topic_section()
     {
-        return $this->belongsTo(\App\Modules\TopicSection\Models\TopicSection::class, 'topic_section_id');
+        return $this->belongsTo(TopicSection::class, 'topic_section_id', 'id');
     }
     public function author()
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(User::class, 'author_id', 'id');
     }
     public function topic_category()
     {
         return $this->hasOneThrough(
-            \App\Modules\TopicCategory\Models\TopicCategory::class,
-            \App\Modules\TopicSection\Models\TopicSection::class,
+            TopicCategory::class,
+            TopicSection::class,
             'id',                       // Foreign key on TopicSection table
             'id',                       // Foreign key on TopicCategory table
             'topic_article_section_id', // Local key on TopicArticle table

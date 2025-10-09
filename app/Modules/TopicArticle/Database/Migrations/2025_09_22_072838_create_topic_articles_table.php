@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     protected $connection;
 
     public function __construct()
@@ -23,8 +22,11 @@ return new class extends Migration
             $table->unsignedBigInteger('author_id')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->string('status')->default('active');
+            $table->boolean('is_marked')->default(false);
 
             $table->timestamps();
+            $table->unique(['topic_section_id', 'title']);
+            $table->unique(['topic_section_id', 'slug']);
         });
     }
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TopicSectionService implements TopicSectionServiceInterface
 {
-    protected $resource=[];
+    protected $resource = ['topic_category', 'topic_articles'];
 
     public function getAll(): Collection
     {

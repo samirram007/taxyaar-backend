@@ -3,6 +3,7 @@
 namespace App\Modules\TopicSection\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TopicSectionRequest extends FormRequest
 {
@@ -13,21 +14,40 @@ class TopicSectionRequest extends FormRequest
 
     public function rules(): array
     {
+        $connection = env('HELP_CENTER_DB_CONNECTION', 'help_center_db');
+
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:topic_sections,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:topic_sections,code'],
-            'description' => ['sometimes','required', 'string', 'max:255'],
-            'status' => ['sometimes','required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_sections")
+                    ->where(fn($query) => $query->where('topic_category_id', $this->input('topic_category_id')))
+                    ->ignore($this->route('topic_section')),
+            ],
+            'slug' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique("{$connection}.topic_sections")
+                    ->where(fn($query) => $query->where('topic_category_id', $this->input('topic_category_id')))
+                    ->ignore($this->route('topic_section')),
+            ],
+            'description' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'status' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'is_marked' => ['sometimes', 'nullable', 'boolean'],
+            'topic_category_id' => ['required', 'numeric', "exists:{$connection}.topic_categories,id"],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('topic_section');
-            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_sections,name,' . $id,];
-            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_sections,code,' . $id,];
+            // $id = $this->route('topic_category');
+            // $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:{$connection}.topic_categories,name,' . $id,];
+            // $rules['slug'] = ['sometimes', 'required', 'string', 'max:255', 'unique:{$connection}.topic_categories,slug,' . $id,];
 
         }
-
+        // dd($rules);
         return $rules;
     }
 
