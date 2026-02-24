@@ -3,6 +3,8 @@ namespace App\Modules\TopicCategory\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class TopicCategory extends Model
 {
@@ -15,18 +17,21 @@ class TopicCategory extends Model
     }
     protected $table = 'topic_categories';
 
-    protected $fillable = ['name', 'slug', 'description', 'status'];
+    protected $fillable = ['name', 'slug', 'description', 'status', 'icon'];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    public function sections()
+    public function topic_sections(): HasMany
     {
-        return $this->hasMany(\App\Modules\TopicSection\Models\TopicSection::class, 'topic_category_id');
+        return $this->hasMany(
+            \App\Modules\TopicSection\Models\TopicSection::class,
+            'topic_category_id'
+        );
     }
-    public function articles()
+    public function topic_articles(): HasManyThrough
     {
         return $this->hasManyThrough(
             \App\Modules\TopicArticle\Models\TopicArticle::class,

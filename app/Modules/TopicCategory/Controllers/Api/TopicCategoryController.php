@@ -31,6 +31,11 @@ class TopicCategoryController extends Controller
         $data = $this->service->getById($id);
         return new TopicCategoryResource($data);
     }
+    public function getBySlug(string $slug): SuccessResource
+    {
+        $data = $this->service->getBySlug($slug);
+        return new TopicCategoryResource($data);
+    }
 
     public function store(TopicCategoryRequest $request): SuccessResource
     {

@@ -9,12 +9,12 @@ class TopicCategorySeeder extends Seeder
 {
     public function run(): void
     {
-        TopicCategory::create([
-            'name' => 'Sample TopicCategory',
-            'slug' => 'category_one',
-            'description' => 'Sample TopicCategory Description',
-            'status' => 'active',
-        ]);
+        // TopicCategory::create([
+        //     'name' => 'Sample TopicCategory',
+        //     'slug' => 'category_one',
+        //     'description' => 'Sample TopicCategory Description',
+        //     'status' => 'active',
+        // ]);
 
         // Uncomment to use factory if available
         // TopicCategory::factory()->count(10)->create();

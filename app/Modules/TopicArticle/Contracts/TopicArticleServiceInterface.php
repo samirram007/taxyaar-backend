@@ -9,6 +9,7 @@ interface TopicArticleServiceInterface
 {
     public function getAll(): Collection;
     public function getById(int $id): ?TopicArticle;
+    public function getBySlug(string $slug): ?TopicArticle;
     public function store(array $data): TopicArticle;
     public function update(array $data, int $id): TopicArticle;
     public function delete(int $id): bool;

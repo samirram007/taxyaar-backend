@@ -16,7 +16,7 @@ class TopicArticleRequest extends FormRequest
     {
         $connection = env('HELP_CENTER_DB_CONNECTION', 'help_center_db');
         $rules = [
-            'name' => [
+            'title' => [
                 'required',
                 'string',
                 'max:255',
@@ -49,10 +49,10 @@ class TopicArticleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name field is required.',
-            'name.string' => 'The name must be a string.',
-            'name.max' => 'The name may not be greater than 255 characters.',
-            'name.unique' => 'The name has already been taken.',
+            'title.required' => 'The name field is required.',
+            'title.string' => 'The name must be a string.',
+            'title.max' => 'The name may not be greater than 255 characters.',
+            'title.unique' => 'The name has already been taken.',
             'code.required' => 'The code field is required.',
             'code.string' => 'The code must be a string.',
             'code.max' => 'The code may not be greater than 255 characters.',

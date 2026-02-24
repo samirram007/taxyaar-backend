@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TopicArticleService implements TopicArticleServiceInterface
 {
-    protected $resource=[];
+    protected $resource = ['topic_section.topic_category', 'creator', 'updater'];
 
     public function getAll(): Collection
     {
+
         return TopicArticle::with($this->resource)->get();
     }
 
@@ -19,9 +20,15 @@ class TopicArticleService implements TopicArticleServiceInterface
     {
         return TopicArticle::with($this->resource)->findOrFail($id);
     }
+    public function getBySlug(string $slug): ?TopicArticle
+    {
+        $localResource = ['topic_section.topic_category', 'relatedArticles', 'creator', 'updater'];
+        return TopicArticle::with($localResource)->where('slug', $slug)->firstOrFail();
+    }
 
     public function store(array $data): TopicArticle
     {
+        //dd($data);
         return TopicArticle::create($data);
     }
 

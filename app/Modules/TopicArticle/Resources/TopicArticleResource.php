@@ -2,8 +2,10 @@
 
 namespace App\Modules\TopicArticle\Resources;
 
+use App\Modules\RelatedArticle\Resources\RelatedArticleResource;
 use App\Modules\TopicCategory\Resources\TopicCategoryResource;
 use App\Modules\TopicSection\Resources\TopicSectionResource;
+use App\Modules\User\Resources\UserResource;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\SuccessResource;
@@ -24,9 +26,13 @@ class TopicArticleResource extends SuccessResource
             'publishedAt' => $this->published_at,
             'topicSection' => TopicSectionResource::make($this->whenLoaded('topic_section')),
             'topicCategory' => TopicCategoryResource::make($this->whenLoaded('topic_category')),
+            'relatedArticles' => TopicArticleMinimumResource::collection($this->whenLoaded('relatedArticles')),
+            // 'relatedArticles' => RelatedArticleResource::collection($this->whenLoaded('related_articles')),
             // 'topicArticles' => TopicArticleResource::collection($this->whenLoaded('topic_articles')),
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'createdAt' => $this->created_at?->toISOString(),
+            'updatedAt' => $this->updated_at?->toISOString(),
+            'creator' => UserResource::make($this->whenLoaded('creator')),
+            'updater' => UserResource::make($this->whenLoaded('updater')),
         ];
     }
 }

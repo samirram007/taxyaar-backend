@@ -2,12 +2,13 @@
 
 namespace App\Modules\Auth\Contracts;
 
+use App\Modules\User\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use App\Modules\Auth\Models\Auth;
 
 interface AuthServiceInterface
 {
-   public function login(array $data): string|array;
+    public function login(array $data): string|array;
 
     public function logout(): void;
 
@@ -15,5 +16,5 @@ interface AuthServiceInterface
 
     public function refresh(): string;
 
-    public function profile(): \App\Modules\User\Models\User; // or array
+    public function profile(): User; // or array
 }

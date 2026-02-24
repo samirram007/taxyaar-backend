@@ -21,7 +21,7 @@ class AuthController extends Controller
     protected $token_expire_duration;
     public function __construct(protected AuthServiceInterface $authService)
     {
-        $this->domain = env('DOMAIN');
+        $this->domain = env('DOMAIN', 'localhost:5173');
         $this->token_expire_duration = env('TOKEN_EXPIRE_DURATION', 30000);
     }
     /**
@@ -132,6 +132,7 @@ class AuthController extends Controller
      */
     public function profile(): JsonResponse
     {
+
         $user = $this->authService->profile();
         return response()->json([
             'status' => 'success',
@@ -174,7 +175,7 @@ class AuthController extends Controller
             $this->domain,
             true,
             true,
-            true,
+            false,
             'None'
         );
 

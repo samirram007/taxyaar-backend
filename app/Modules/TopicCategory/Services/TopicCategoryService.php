@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TopicCategoryService implements TopicCategoryServiceInterface
 {
-    protected $resource = [];
+    protected $resource = ['topic_sections.topic_articles'];
 
     public function getAll(): Collection
     {
@@ -17,7 +17,13 @@ class TopicCategoryService implements TopicCategoryServiceInterface
 
     public function getById(int $id): ?TopicCategory
     {
-        return TopicCategory::with($this->resource)->findOrFail($id);
+        $localResource = 'topic_sections.topic_articles';
+        return TopicCategory::with($localResource)->findOrFail($id);
+    }
+    public function getBySlug(string $slug): ?TopicCategory
+    {
+        $localResource = 'topic_sections.topic_articles';
+        return TopicCategory::with($localResource)->where('slug', $slug)->firstOrFail();
     }
 
     public function store(array $data): TopicCategory

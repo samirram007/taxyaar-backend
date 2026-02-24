@@ -2,6 +2,8 @@
 
 namespace App\Modules\TopicCategory\Resources;
 
+use App\Modules\TopicSection\Models\TopicSection;
+use App\Modules\TopicSection\Resources\TopicSectionResource;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\SuccessResource;
@@ -15,6 +17,8 @@ class TopicCategoryResource extends SuccessResource
             'slug' => $this->slug,
             'status' => $this->status,
             'description' => $this->description,
+            'topicSections' => TopicSectionResource::collection($this->whenLoaded('topic_sections')),
+            'icon' => $this->icon,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

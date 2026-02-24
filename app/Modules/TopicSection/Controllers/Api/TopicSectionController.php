@@ -29,6 +29,11 @@ class TopicSectionController extends Controller
         $data = $this->service->getById($id);
         return  new TopicSectionResource($data);
     }
+    public function getBySlug(string $slug): SuccessResource
+    {
+        $data = $this->service->getBySlug($slug);
+        return  new TopicSectionResource($data);
+    }
 
     public function store(TopicSectionRequest $request): SuccessResource
     {

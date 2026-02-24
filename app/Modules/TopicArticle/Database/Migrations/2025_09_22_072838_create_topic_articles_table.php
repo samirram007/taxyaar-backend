@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->boolean('is_marked')->default(false);
 
             $table->timestamps();
+            $table->blamable();
             $table->unique(['topic_section_id', 'title']);
             $table->unique(['topic_section_id', 'slug']);
         });

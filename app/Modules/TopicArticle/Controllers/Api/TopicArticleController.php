@@ -16,7 +16,9 @@ class TopicArticleController extends Controller
 {
     use ApiResponseTrait;
 
-    public function __construct(protected TopicArticleServiceInterface $service) {}
+    public function __construct(protected TopicArticleServiceInterface $service)
+    {
+    }
 
     public function index(): SuccessCollection
     {
@@ -27,29 +29,36 @@ class TopicArticleController extends Controller
     public function show(int $id): SuccessResource
     {
         $data = $this->service->getById($id);
-        return  new TopicArticleResource($data);
+        return new TopicArticleResource($data);
+    }
+    public function getBySlug(string $slug): SuccessResource
+    {
+        $data = $this->service->getBySlug($slug);
+        return new TopicArticleResource($data);
     }
 
     public function store(TopicArticleRequest $request): SuccessResource
     {
+
         $data = $this->service->store($request->validated());
-       return  new TopicArticleResource($data, $messages='TopicArticle created successfully');
+
+        return new TopicArticleResource($data, $messages = 'TopicArticle created successfully');
     }
 
     public function update(TopicArticleRequest $request, int $id): SuccessResource
     {
         $data = $this->service->update($request->validated(), $id);
-        return  new TopicArticleResource($data, $messages='TopicArticle updated successfully');
+        return new TopicArticleResource($data, $messages = 'TopicArticle updated successfully');
     }
 
-        public function destroy(int $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
 
-        $result=$this->service->delete($id);
+        $result = $this->service->delete($id);
         return new JsonResponse([
             'status' => $result,
             'code' => 204,
-            'message' => $result?'TopicArticle deleted successfully':'TopicArticle not found',
+            'message' => $result ? 'TopicArticle deleted successfully' : 'TopicArticle not found',
         ]);
     }
 }

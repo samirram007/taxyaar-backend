@@ -20,6 +20,12 @@ class TopicSectionService implements TopicSectionServiceInterface
         return TopicSection::with($this->resource)->findOrFail($id);
     }
 
+    public function getBySlug(string $slug): ?TopicSection
+    {
+        $localResource = ['topic_category', 'topic_articles'];
+        return TopicSection::with($localResource)->where('slug', $slug)->firstOrFail();
+    }
+
     public function store(array $data): TopicSection
     {
         return TopicSection::create($data);

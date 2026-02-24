@@ -3,5 +3,5 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\ModuleServiceLoader::class,
-
+    App\Providers\AuditServiceProvider::class,
 ];
