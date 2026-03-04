@@ -115,6 +115,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                     $e->getMessage() ?? 'Internal server error.',
                     $e->getCode() ?? 500,
+                        ($e->getCode() && $e->getCode() < 600) ? $e->getCode() : 500,
                     config('app.debug') ? ['debug' => $e->getMessage()] : null,
                     'INTERNAL_ERROR'
                 );
