@@ -69,83 +69,6 @@ class AuthController extends Controller
         return $this->respondWithToken($token, 'Login successful!');
 
     }
-
-    public function googleLogin(\Illuminate\Http\Request $request): JsonResponse
-    {
-        try {
-            $token = $request->input('access_token');
-            if (!$token) {
-                return response()->json(['success' => false, 'message' => 'Token required', 'code' => 400], 400);
-            }
-
-            $googleData = $this->decodeGoogleToken($token);
-            if (!$googleData) {
-                return response()->json(['success' => false, 'message' => 'Invalid token', 'code' => 401], 401);
-            }
-
-            $user = $this->userService->findByProvider('google', $googleData['sub']);
-            if (!$user) {
-                return response()->json(['success' => false, 'message' => 'User unknown,Please register yourself.', 'code' => 404], 404);
-            }
-
-            $jwtToken = $this->authService->loginWithUser($user);
-            return $this->respondWithToken($jwtToken, 'Login successful!');
-        } catch (\Exception $e) {
-            Log::error('Google login: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Login failed', 'code' => 401], 401);
-        }
-    }
-
-    public function googleRegister(\Illuminate\Http\Request $request): JsonResponse
-    {
-        try {
-            $token = $request->input('access_token');
-            if (!$token) {
-                return response()->json(['success' => false, 'message' => 'Token required', 'code' => 400], 400);
-            }
-
-            $googleData = $this->decodeGoogleToken($token);
-            if (!$googleData) {
-                return response()->json(['success' => false, 'message' => 'Invalid token', 'code' => 401], 401);
-            }
-
-            $existing = $this->userService->findByEmail($googleData['email']);
-            if ($existing) {
-                return response()->json(['success' => false, 'message' => 'Email already registered,please login', 'code' => 409], 409);
-            }
-
-            $user = $this->userService->store([
-                'name' => $googleData['name'] ?? '',
-                'email' => $googleData['email'],
-                'provider' => 'google',
-                'provider_id' => $googleData['sub'],
-                'user_type' => 'user',
-                'status' => 'active',
-                'password' => bcrypt(str_random(16)),
-            ]);
-
-            $jwtToken = $this->authService->loginWithUser($user);
-            return $this->respondWithToken($jwtToken, 'Registration successful! ');
-        } catch (\Exception $e) {
-            Log::error('Google register: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Registration failed :(', 'code' => 401], 401);
-        }
-    }
-
-    //rn using manual decoding not socialite(will work later on)
-    private function decodeGoogleToken(string $token): ?array
-    {
-        try {
-            $parts = explode('.', $token);
-            if (count($parts) !== 3) return null;
-
-            $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
-            return isset($payload['sub'], $payload['email']) ? $payload : null;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
     public function socialCallback(string $provider)
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();
@@ -244,31 +167,6 @@ class AuthController extends Controller
         return $this->respondWithToken($token, 'Token refreshed successfully!');
 
     }
-
-
-    //for testing glogin 
-    // public function testGoogleLogin(): JsonResponse
-    // {
-    //     try {
-    //         $socialUser = new class {
-    //             public function getId() { return '123456789'; }
-    //             public function getName() { return 'Test User'; }
-    //             public function getEmail() { return 'testuser@gmail.com'; }
-    //             public function getNickname() { return 'testuser'; }
-    //         };
-
-    //         $user = $this->userService->findOrCreateFromProvider($socialUser, 'google');
-    //         $token = $this->authService->loginWithUser($user);
-    //         return $this->respondWithToken($token, 'Test Google login successful!');
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $e->getMessage(),
-    //             'code' => 400,
-    //             'errorCode' => 'TEST_LOGIN_FAILED'
-    //         ], 400);
-    //     }
-    // }
 
     protected function respondWithToken(string $token, string $message = 'Authenticated successfully!')
     {

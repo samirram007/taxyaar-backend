@@ -27,10 +27,7 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'user_type',
         'password',
-        'status',
-        'provider',
-        'provider_id',
-        'email_verified_at'
+        'status'
     ];
     protected $connection;
     /**

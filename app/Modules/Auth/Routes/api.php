@@ -5,12 +5,8 @@ use App\Modules\Auth\Controllers\Api\AuthController;
 
 Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
+    //  Route::post('/swaggerLogin', [AuthController::class, 'swaggerLogin']);
     Route::post('/login', [AuthController::class, 'login']);
-
-    //google routews
-    Route::post('/google/login', [AuthController::class, 'googleLogin']);
-    Route::post('/google/register', [AuthController::class, 'googleRegister']);
-    Route::post('/test/google/login', [AuthController::class, 'testGoogleLogin']);
     Route::get('/profile', [AuthController::class, 'profile'])->middleware('jwt.cookies');
 });
 Route::middleware(['jwt.cookies'])->group(function () {
