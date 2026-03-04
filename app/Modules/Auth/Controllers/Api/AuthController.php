@@ -4,25 +4,30 @@ namespace App\Modules\Auth\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Contracts\AuthServiceInterface;
+use App\Modules\Auth\Requests\ChangePasswordRequest;
 use App\Modules\Auth\Requests\LoginRequest;
 use App\Modules\Auth\Requests\RegisterRequest;
-use App\Modules\Auth\Resources\AuthResource;
-use App\Modules\Auth\Resources\AuthCollection;
-use App\Modules\Auth\Requests\AuthRequest;
-use App\Http\Resources\SuccessResource;
+
+use App\Modules\User\Contracts\UserServiceInterface;
 use App\Modules\User\Resources\UserResource;
-use App\Traits\ApiResponseTrait;
+
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
 
     protected $domain;
     protected $token_expire_duration;
-    public function __construct(protected AuthServiceInterface $authService)
-    {
-        $this->domain = env('DOMAIN', 'localhost:5173');
-        $this->token_expire_duration = env('TOKEN_EXPIRE_DURATION', 30000);
+    public function __construct(
+        protected AuthServiceInterface $authService,
+        protected UserServiceInterface $userService
+    ) {
+        // dd(config('session.domain'));
+        $this->domain = config('session.domain');
+
+        $this->token_expire_duration = config('session.lifetime') * 60; // Convert minutes to seconds
     }
     /**
      * @OA\Post(
@@ -60,10 +65,19 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-
         $token = $this->authService->login($request->validated());
         return $this->respondWithToken($token, 'Login successful!');
 
+    }
+    public function socialCallback(string $provider)
+    {
+        $socialUser = Socialite::driver($provider)->stateless()->user();
+
+        $user = $this->userService->findOrCreateFromProvider($socialUser, $provider);
+
+        $token = $this->authService->loginWithUser($user); // ← uses same method!
+
+        return $this->respondWithToken($token);
     }
 
     public function register(RegisterRequest $request): JsonResponse
@@ -104,32 +118,17 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out'])->withCookie($cookie);
     }
+    public function clean_logout(): JsonResponse
+    {
+
+        // $this->authService->logout();
+        $cookie = cookie('token', '', -1, '/', $this->domain, true, true);
+
+        return response()->json(['message' => 'Logged out'])->withCookie($cookie);
+    }
 
 
-    /**
-     * @OA\Get(
-     *     path="/api/auth/profile",
-     *     tags={"Auth"},
-     *     summary="Get user profile",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="User profile fetched successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="User profile fetched successfully."),
-     *             @OA\Property(property="data", type="object", ref="#/components/schemas/UserResource"),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthorized"),
-     *         )
-     *     ),
-     * )
-     */
+
     public function profile(): JsonResponse
     {
 
@@ -140,23 +139,27 @@ class AuthController extends Controller
             'data' => new UserResource($user),
         ]);
     }
+    public function profile2(): JsonResponse
+    {
 
-    /**
-     * @OA\Post(
-     *     path="/api/auth/refresh",
-     *     tags={"Auth"},
-     *     summary="Refresh user token",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="User token refreshed successfully",
-     *      @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Token refreshed successfully!"),
-     *      )
-     * )
-     * )
-     */
+        // $user = $this->authService->profile();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User profile fetched successfully.',
+            'data' => [],
+        ]);
+    }
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $this->authService->changePassword($request->validated());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password changed successfully.',
+            'data' => [],
+        ]);
+    }
+
+
 
     public function refresh()
     {
@@ -167,6 +170,10 @@ class AuthController extends Controller
 
     protected function respondWithToken(string $token, string $message = 'Authenticated successfully!')
     {
+        // Log::info(
+        //     'AuthService initialized response',
+        //     ['domain' => $this->domain, 'token_expire_duration' => $this->token_expire_duration, 'token' => $token]
+        // );
         $cookie = cookie(
             'token',
             $token,
@@ -175,9 +182,10 @@ class AuthController extends Controller
             $this->domain,
             true,
             true,
-            false,
+            true,
             'None'
         );
+        Log::info(' cookie', ['cookie' => $cookie]);
 
         return response()->json([
             // 'token' => $token,

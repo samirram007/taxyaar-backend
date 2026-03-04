@@ -12,4 +12,6 @@ interface HelpCenterServiceInterface
     public function store(array $data): HelpCenter;
     public function update(array $data, int $id): HelpCenter;
     public function delete(int $id): bool;
+    public function searchArticle(string $query): Collection;
+
 }

@@ -1,0 +1,18 @@
+###
+curl -X POST  https://taxyaar-api.local/api/auth/login
+-H "Content-Type: application/json" 
+-d '{"email":"admin@admin.com","password":"password"}'
+
+
+###
+curl 
+-X GET 
+-H "Content-Type: application/json" 
+https://aipt-api.local/api/auth/profile
+
+
+###
+curl 
+-X GET 
+-H "Content-Type: application/json" 
+https://aipt-api.local/api/stock_items

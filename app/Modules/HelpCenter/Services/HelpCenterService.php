@@ -4,11 +4,12 @@ namespace App\Modules\HelpCenter\Services;
 
 use App\Modules\HelpCenter\Contracts\HelpCenterServiceInterface;
 use App\Modules\HelpCenter\Models\HelpCenter;
+use App\Modules\TopicArticle\Models\TopicArticle;
 use Illuminate\Database\Eloquent\Collection;
 
 class HelpCenterService implements HelpCenterServiceInterface
 {
-    protected $resource=[];
+    protected $resource = [];
 
     public function getAll(): Collection
     {
@@ -36,5 +37,16 @@ class HelpCenterService implements HelpCenterServiceInterface
     {
         $record = HelpCenter::findOrFail($id);
         return $record->delete();
+    }
+    public function searchArticle(string $query): Collection
+    {
+        $result = TopicArticle::where('title', 'like', "%$query%");
+        //dd($result->toRawSql());
+        return TopicArticle::where('title', 'like', "%$query%")
+            ->orWhere('slug', 'like', "%$query%")
+            ->orWhere('content', 'like', "%$query%")
+            ->select('id', 'title', 'slug', )
+            ->limit(10)
+            ->get();
     }
 }

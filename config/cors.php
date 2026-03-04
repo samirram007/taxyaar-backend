@@ -18,8 +18,8 @@ return [
 
     //  'paths' => ['api/*', 'login', 'logout', 'refresh'],
     // 'allowed_methods' => ['*'],
-    // 'allowed_origins' => ['https://taxyaar-api.local', 'http://localhost:5173'],
 
+    // 'allowed_origins' => ['https://taxyaar-api.local', 'http://localhost:5173'],
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
