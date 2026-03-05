@@ -84,7 +84,6 @@ class AuthController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Invalid token'], 401);
             }
 
-            // Check if user exists by provider ID
             $user = $this->userService->findByProvider('google', $googleData['sub']);
 
             // If NOT exists, create new user
@@ -103,30 +102,7 @@ class AuthController extends Controller
             }
 
             $jwtToken = $this->authService->loginWithUser($user);
-            
-            $cookie = cookie(
-                'token',
-                $jwtToken,
-                $this->token_expire_duration,
-                '/',
-                $this->domain,
-                true,
-                true,
-                true,
-                'None'
-            );
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Google login successful!',
-                'data' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'user_type' => $user->user_type,
-                    'status' => $user->status,
-                ]
-            ])->withCookie($cookie);
+            return $this->respondWithToken($jwtToken, 'Google login successful!');
         } catch (\Exception $e) {
             Log::error('Google login: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Authentication failed'], 401);
