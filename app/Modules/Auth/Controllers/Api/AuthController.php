@@ -13,6 +13,7 @@ use App\Modules\User\Resources\UserResource;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -69,6 +70,59 @@ class AuthController extends Controller
         return $this->respondWithToken($token, 'Login successful!');
 
     }
+
+    public function googleLogin(\Illuminate\Http\Request $request): JsonResponse
+    {
+        try {
+            $token = $request->input('access_token');
+            if (!$token) {
+                return response()->json(['status' => 'error', 'message' => 'Token required'], 400);
+            }
+
+            $googleData = $this->decodeGoogleToken($token);
+            if (!$googleData) {
+                return response()->json(['status' => 'error', 'message' => 'Invalid token'], 401);
+            }
+
+            $user = $this->userService->findByProvider('google', $googleData['sub']);
+
+            // If NOT exists, create new user
+            if (!$user) {
+                $user = $this->userService->store([
+                    'name' => $googleData['name'] ?? '',
+                    'email' => $googleData['email'],
+                    'username' => str_replace('@', '_', $googleData['email']),
+                    'provider' => 'google',
+                    'provider_id' => $googleData['sub'],
+                    'user_type' => 'user',
+                    'status' => 'active',
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]);
+            }
+
+            $jwtToken = $this->authService->loginWithUser($user);
+            return $this->respondWithToken($jwtToken, 'Google login successful!');
+        } catch (\Exception $e) {
+            Log::error('Google login: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Authentication failed'], 401);
+        }
+    }
+
+    //rn using manual decoding not socialite(will work later on)
+    private function decodeGoogleToken(string $token): ?array
+    {
+        try {
+            $parts = explode('.', $token);
+            if (count($parts) !== 3) return null;
+
+            $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+            return isset($payload['sub'], $payload['email']) ? $payload : null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function socialCallback(string $provider)
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();
@@ -166,6 +220,41 @@ class AuthController extends Controller
         $token = $this->authService->refresh();
         return $this->respondWithToken($token, 'Token refreshed successfully!');
 
+    }
+
+
+    public function testGoogleLogin(): JsonResponse
+    {
+        try {
+            $googleData = [
+                'sub' => '123456789',
+                'name' => 'Test User',
+                'email' => 'testuser@gmail.com'
+            ];
+
+            $user = $this->userService->findByProvider('google', $googleData['sub']);
+            if (!$user) {
+                $user = $this->userService->store([
+                    'name' => $googleData['name'],
+                    'email' => $googleData['email'],
+                    'provider' => 'google',
+                    'provider_id' => $googleData['sub'],
+                    'user_type' => 'user',
+                    'status' => 'active',
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]);
+            }
+
+            $token = $this->authService->loginWithUser($user);
+            return $this->respondWithToken($token, 'Test Google login successful!');
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'code' => 400
+            ], 400);
+        }
     }
 
     protected function respondWithToken(string $token, string $message = 'Authenticated successfully!')

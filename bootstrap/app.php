@@ -110,11 +110,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (Throwable $e) {
 
             if (request()->is('api/*')) {
-                // dd($e);
                 return ApiErrorResponse::respond(
-
                     $e->getMessage() ?? 'Internal server error.',
-                    $e->getCode() ?? 500,
+                    ($e->getCode() && $e->getCode() < 600) ? $e->getCode() : 500,
                     config('app.debug') ? ['debug' => $e->getMessage()] : null,
                     'INTERNAL_ERROR'
                 );

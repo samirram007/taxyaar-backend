@@ -18,9 +18,11 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+             $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
             $table->rememberToken();
             $table->unsignedBigInteger('userable_id')->default(0);
-            $table->string('userable_type')->default('employee');
+            $table->string('userable_type')->default('member');
             $table->string('status')->default('active');
             $table->timestamps();
 
