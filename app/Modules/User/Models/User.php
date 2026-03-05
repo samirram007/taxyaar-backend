@@ -2,11 +2,13 @@
 
 namespace App\Modules\User\Models;
 
+use App\Modules\Client\Models\Client;
 use App\Modules\Role\Models\Role;
 use App\Traits\Blameable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -100,5 +102,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    public function clients(): HasMany
+    {
+        return $this->hasMany(Client::class, 'user_id', 'id');
     }
 }
