@@ -7,9 +7,8 @@ Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
-    //google routews
+    //google routes
     Route::post('/google/login', [AuthController::class, 'googleLogin']);
-    Route::post('/google/register', [AuthController::class, 'googleRegister']);
     Route::post('/test/google/login', [AuthController::class, 'testGoogleLogin']);
     Route::get('/profile', [AuthController::class, 'profile'])->middleware('jwt.cookies');
 });
