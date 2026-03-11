@@ -67,6 +67,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $token = $this->authService->login($request->validated());
+
         return $this->respondWithToken($token, 'Login successful!');
 
     }
@@ -114,7 +115,8 @@ class AuthController extends Controller
     {
         try {
             $parts = explode('.', $token);
-            if (count($parts) !== 3) return null;
+            if (count($parts) !== 3)
+                return null;
 
             $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
             return isset($payload['sub'], $payload['email']) ? $payload : null;

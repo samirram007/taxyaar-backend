@@ -4,8 +4,7 @@ namespace App\Modules\User\Models;
 
 use App\Modules\Client\Models\Client;
 use App\Modules\Role\Models\Role;
-use App\Traits\Blameable;
-use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Blameable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.

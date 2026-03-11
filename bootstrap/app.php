@@ -108,6 +108,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (Throwable $e) {
+            // dd($e->getMessage());
 
             if (request()->is('api/*')) {
                 return ApiErrorResponse::respond(
