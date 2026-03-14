@@ -44,12 +44,15 @@ class AuthService implements AuthServiceInterface
 
     public function register($data): string
     {
-
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'username' => explode('@', $data['email'])[0],
             'password' => Hash::make($data['password']),
+            'user_type' => 'user', 
+            'status' => 'active', 
+            'provider' => 'password',
+            'email_verified_at' => now(), 
         ]);
 
         $token = Auth::attempt($data);
