@@ -17,7 +17,7 @@ class AuthService implements AuthServiceInterface
     public function login(array $credentials): string
     {
         $token = Auth::attempt($credentials);
-
+        //dd($token);
         if (!$token) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
