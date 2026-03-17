@@ -15,21 +15,23 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id');
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
+            $table->string('email')->unique();
             $table->string('last_name');
             $table->string('father_name');
             $table->string('residentialStatusCd')->nullable();
             $table->string('isdCd')->nullable();
             // $table->enum('priMobBelongsTo',PrimaryMobileBelongEnum::getValues());
             // $table->enum('priEmailRelationId',PrimaryMobileBelongEnum::getValues());
+            $table->boolean("is_verified")->default(false);
+            $table->date("valid_upto")->nullable();
             $table->string('pan');
-            $table->string('pinCd');
+            $table->string('pinCd')->nullable();
             $table->string('zipCd')->nullable();
             $table->string("countryCd")->nullable();
             $table->string("stateCd")->nullable();
             $table->date('dob');
             $table->string('mobile_number');
-            $table->string('gender')->nullable();
-            $table->string('email');
+            $table->string('gender');
             $table->string('country')->default('IN');
 
             $table->timestamps();

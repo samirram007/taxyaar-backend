@@ -18,13 +18,20 @@ class Client extends Model
         'middle_name',
         'last_name',
         'father_name',
+        'residentialStatusCd',
+        'isdCd',
+        'is_verified',
+        'valid_upto',
         'pan',
+        'pinCd',
+        'zipCd',
+        'countryCd',
+        'stateCd',
         'dob',
         'mobile_number',
         'gender',
         'email',
         'country',
-
     ];
 
     protected $casts = [
