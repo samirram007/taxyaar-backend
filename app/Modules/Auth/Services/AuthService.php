@@ -73,11 +73,7 @@ class AuthService implements AuthServiceInterface
         } catch (\Exception $e) {
             //return response()->json(['error' => 'Failed to logout, token not found or already invalid'], 400);
             throw new \Exception("Error Processing Request", 1);
-
-
         }
-
-
     }
     public function refresh(): string
     {
@@ -103,5 +99,4 @@ class AuthService implements AuthServiceInterface
 
         return $user;
     }
-
 }

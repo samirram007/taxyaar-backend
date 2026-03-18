@@ -5,10 +5,11 @@ namespace App\Modules\Client\Services;
 use App\Modules\Client\Contracts\ClientServiceInterface;
 use App\Modules\Client\Models\Client;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class ClientService implements ClientServiceInterface
 {
-    protected $resource=[];
+    protected $resource = [];
 
     public function getAll(): Collection
     {
@@ -22,6 +23,7 @@ class ClientService implements ClientServiceInterface
 
     public function store(array $data): Client
     {
+        $data['user_id'] = Auth::id();
         return Client::create($data);
     }
 
