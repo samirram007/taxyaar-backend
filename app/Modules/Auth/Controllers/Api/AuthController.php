@@ -92,7 +92,7 @@ class AuthController extends Controller
                 $user = $this->userService->store([
                     'name' => $googleData['name'] ?? '',
                     'email' => $googleData['email'],
-                    'username' => str_replace('@', '_', $googleData['email']),
+                    'username' => explode('@', $googleData['email'])[0],
                     'provider' => 'google',
                     'provider_id' => $googleData['sub'],
                     'user_type' => 'user',

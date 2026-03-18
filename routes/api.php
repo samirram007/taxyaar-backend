@@ -2,11 +2,13 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\EnumController;
 
 Route::post('reload', function () {
     Artisan::call('migrate:refresh --seed');
 });
 Route::middleware(['jwt.cookies'])->group(function () {
+        Route::get('enums/{enum}', [EnumController::class, 'index']);
     Route::post('reload', function () {
         Artisan::call('migrate:refresh --seed');
     });

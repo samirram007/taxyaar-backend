@@ -1,0 +1,29 @@
+<?php
+
+
+namespace App\Http\Controllers\api;
+
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\JsonResponse;
+use Str;
+
+class EnumController extends Controller
+{
+    public function index(string $enum): ?JsonResponse
+    {
+        $class = 'App\\Enums\\' . Str::studly($enum);
+        if (!enum_exists($class)) {
+            return response()->json(['error' => 'Enum not found'], 404);
+        }
+
+        $data = array_map(fn($case)=>[
+            'name'=> $case->name,
+            'value'=> $case->value
+        ],$class::cases());
+
+        return new JsonResponse([
+            'data' => $data
+        ]);
+    }
+}
