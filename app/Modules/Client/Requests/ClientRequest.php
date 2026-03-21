@@ -33,7 +33,12 @@ class ClientRequest extends FormRequest
             'mobile_number' => ['required', 'string', 'max:13'],
             'gender' => ['required', 'string'],
             'email' => ['email', 'required', 'string'],
-            'country' => ['somtimes', 'nullable', 'string']
+            'country' => ['somtimes', 'nullable', 'string'],
+            'address_line_1' => ['sometimes', 'nullable', 'string', 'max:60'],
+            'address_line_2' => ['sometimes', 'nullable', 'string', 'max:60'],
+            'address_line_3' => ['sometimes', 'nullable', 'string', 'max:60'],
+            'address_line_4' => ['sometimes', 'nullable', 'string', 'max:60'],
+            'address_line_5' => ['sometimes', 'nullable', 'string', 'max:60'],
         ];
 
         // For update requests, make validation more flexible
