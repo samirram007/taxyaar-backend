@@ -13,7 +13,6 @@ use App\Modules\User\Resources\UserResource;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -25,10 +24,9 @@ class AuthController extends Controller
         protected AuthServiceInterface $authService,
         protected UserServiceInterface $userService
     ) {
-        // dd(config('session.domain'));
         $this->domain = config('session.domain');
-
-        $this->token_expire_duration = config('session.lifetime') * 60; // Convert minutes to seconds
+        // $this->token_expire_duration = env('TOKEN_EXPIRE_DURATION', 30000);
+        $this->token_expire_duration = config('session.lifetime') * 60;
     }
     /**
      * @OA\Post(
@@ -67,64 +65,9 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $token = $this->authService->login($request->validated());
-
         return $this->respondWithToken($token, 'Login successful!');
 
     }
-
-    public function googleLogin(\Illuminate\Http\Request $request): JsonResponse
-    {
-        try {
-            $token = $request->input('access_token');
-            if (!$token) {
-                return response()->json(['status' => 'error', 'message' => 'Token required'], 400);
-            }
-
-            $googleData = $this->decodeGoogleToken($token);
-            if (!$googleData) {
-                return response()->json(['status' => 'error', 'message' => 'Invalid token'], 401);
-            }
-
-            $user = $this->userService->findByProvider('google', $googleData['sub']);
-
-            // If NOT exists, create new user
-            if (!$user) {
-                $user = $this->userService->store([
-                    'name' => $googleData['name'] ?? '',
-                    'email' => $googleData['email'],
-                    'username' => str_replace('@', '_', $googleData['email']),
-                    'provider' => 'google',
-                    'provider_id' => $googleData['sub'],
-                    'user_type' => 'user',
-                    'status' => 'active',
-                    'email_verified_at' => now(),
-                    'password' => bcrypt(Str::random(16)),
-                ]);
-            }
-
-            $jwtToken = $this->authService->loginWithUser($user);
-            return $this->respondWithToken($jwtToken, 'Google login successful!');
-        } catch (\Exception $e) {
-            Log::error('Google login: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Authentication failed'], 401);
-        }
-    }
-
-    //rn using manual decoding not socialite(will work later on)
-    private function decodeGoogleToken(string $token): ?array
-    {
-        try {
-            $parts = explode('.', $token);
-            if (count($parts) !== 3)
-                return null;
-
-            $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
-            return isset($payload['sub'], $payload['email']) ? $payload : null;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
     public function socialCallback(string $provider)
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();
@@ -224,47 +167,9 @@ class AuthController extends Controller
 
     }
 
-
-    public function testGoogleLogin(): JsonResponse
-    {
-        try {
-            $googleData = [
-                'sub' => '123456789',
-                'name' => 'Test User',
-                'email' => 'testuser@gmail.com'
-            ];
-
-            $user = $this->userService->findByProvider('google', $googleData['sub']);
-            if (!$user) {
-                $user = $this->userService->store([
-                    'name' => $googleData['name'],
-                    'email' => $googleData['email'],
-                    'provider' => 'google',
-                    'provider_id' => $googleData['sub'],
-                    'user_type' => 'user',
-                    'status' => 'active',
-                    'email_verified_at' => now(),
-                    'password' => bcrypt(Str::random(16)),
-                ]);
-            }
-
-            $token = $this->authService->loginWithUser($user);
-            return $this->respondWithToken($token, 'Test Google login successful!');
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'code' => 400
-            ], 400);
-        }
-    }
-
     protected function respondWithToken(string $token, string $message = 'Authenticated successfully!')
     {
-        // Log::info(
-        //     'AuthService initialized response',
-        //     ['domain' => $this->domain, 'token_expire_duration' => $this->token_expire_duration, 'token' => $token]
-        // );
+
         $cookie = cookie(
             'token',
             $token,
