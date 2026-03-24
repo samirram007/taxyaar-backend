@@ -16,7 +16,6 @@ class TicketType extends Model
         'code',
         'description',
         'status',
-
     ];
 
     protected $casts = [

@@ -5,10 +5,11 @@ namespace App\Modules\Document\Services;
 use App\Modules\Document\Contracts\DocumentServiceInterface;
 use App\Modules\Document\Models\Document;
 use Illuminate\Database\Eloquent\Collection;
+use App\Enums\DocumentTypeEnum;
 
 class DocumentService implements DocumentServiceInterface
 {
-    protected $resource=[];
+    protected $resource = [];
 
     public function getAll(): Collection
     {
@@ -22,7 +23,18 @@ class DocumentService implements DocumentServiceInterface
 
     public function store(array $data): Document
     {
-        return Document::create($data);
+        $file = $data['file'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        $fileName = time() . '_' . uniqid() . '.' . $extension;
+        $path = $file->storeAs('uploads', $fileName, 'public');
+        $size = $file->getSize();
+        return Document::create([
+            'file_path' => $path,
+            'file_type' => DocumentTypeEnum::tryFrom($extension),
+            'file_size' => $size,
+            'documentable_id' => $data['documentable_id'],
+            'documentable_type' => $data['documentable_type'],
+        ]);
     }
 
     public function update(array $data, int $id): Document

@@ -3,6 +3,9 @@
 namespace App\Modules\TicketMaster\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use App\Enums\TicketStatus;
+use App\Enums\DevicePlatform;
 
 class TicketMasterRequest extends FormRequest
 {
@@ -14,18 +17,28 @@ class TicketMasterRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:ticket_masters,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:ticket_masters,code'],
-            'description' => ['sometimes','required', 'string', 'max:255'],
-            'status' => ['sometimes','required', 'string', 'max:255'],
+            'mobile_number' => ['required', 'string', 'max:20'],
+            'ticket_type_id' => ['required', 'numeric'],
+            'priority_id' => ['nullable', 'numeric'],
+            'status_id' => ['nullable', 'numeric'],
+            'assigned_by' => ['sometimes', 'required', 'string'],
+            'assigned_by_id' => ['nullable', 'numeric'],
+            'assigned_to' => ['nullable', 'numeric'],
+            'email' => ['required', 'email', 'string', 'max:255'],
+            'paused_at' => ['nullable', 'date'],
+            'paused_duration' => ['nullable', 'string'],
+            'pan' => ['required', 'string', 'max:10'],
+            'platform' => ['sometimes', 'required', new Enum(DevicePlatform::class)],
+            'subject' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['sometimes', 'required', 'string'],
+            'file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,xls,xlsx,csv,doc,docx,txt'],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('ticket_master');
+            $id = $this->route('ticket_master');
             $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:ticket_masters,name,' . $id,];
             $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:ticket_masters,code,' . $id,];
-
         }
 
         return $rules;

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\DocumentTypeEnum;
 
 return new class extends Migration
 {
@@ -10,12 +11,10 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('code')->unique();
-            $table->string('description')->nullable();
-            $table->string('status')->default('active');
-            $table->string('icon')->nullable();
-
+            $table->string('file_path');
+            $table->enum('file_type', DocumentTypeEnum::cases());
+            $table->integer('file_size')->nullable();
+            $table->morphs('documentable');
             $table->timestamps();
         });
     }
