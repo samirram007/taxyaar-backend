@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,6 +17,9 @@ use App\Modules\Role\Database\Seeders\RoleSeeder;
 use App\Modules\State\Database\Seeders\StateSeeder;
 use App\Modules\TopicCategory\Database\Seeders\TopicCategorySeeder;
 use Illuminate\Database\Seeder;
+use App\Modules\TicketType\Database\Seeders\TicketTypeSeeder;
+use App\Modules\TicketPriority\Database\Seeders\TicketPrioritySeeder;
+use App\Modules\TicketStatus\Database\Seeders\TicketStatusSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +29,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-                // TopicCategorySeeder::class
+            // TopicCategorySeeder::class
             AppModuleSeeder::class,
             RoleSeeder::class,
 
@@ -42,13 +46,15 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             DesignationSeeder::class,
             GradeSeeder::class,
-                // ShiftSeeder::class,
+            TicketTypeSeeder::class,
+            TicketPrioritySeeder::class,
+            TicketStatusSeeder::class,
+            // ShiftSeeder::class,
 
-                // VoucherSeeder::class,
-                // VoucherEntrySeeder::class,
+            // VoucherSeeder::class,
+            // VoucherEntrySeeder::class,
 
             EmployeeGroupSeeder::class,
         ]);
-
     }
 }
