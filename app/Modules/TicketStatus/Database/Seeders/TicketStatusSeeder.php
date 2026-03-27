@@ -9,6 +9,9 @@ class TicketStatusSeeder extends Seeder
 {
     public function run(): void
     {
+        /// one more statuses to be added *Awaiting your reply*
+
+
         $statuses = [
             [
                 'name' => 'OPEN',

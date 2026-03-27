@@ -33,29 +33,39 @@ class ClientService implements ClientServiceInterface
             $data['user_id'] = Auth::id();
             $client = Client::create($data);
 
-            $country = Country::where('phone_code', $data['isd_cd'] ?? null)->first();
+            $country = !empty($data['isd_cd'])
+                ? Country::where('phone_code', $data['isd_cd'])->first()
+                : null;
 
-            $state = State::where('state_code', $data['state_cd'] ?? null)->first();
+            $state = !empty($data['state_cd'])
+                ? State::where('state_code', $data['state_cd'])->first()
+                : null;
 
-            Address::create([
+            $addressData = [
                 'line1' => $data['address_line_1'] ?? null,
                 'landmark' => $data['address_line_2'] ?? null,
                 'district' => $data['address_line_3'] ?? null,
                 'city' => $data['address_line_4'] ?? null,
                 'post_office' => $data['address_line_5'] ?? null,
-
-                'country_id' => $country?->id,
-                'state_id' => $state?->id,
-
                 'postal_code' => $data['pin_cd'] ?? null,
+            ];
 
-                'address_type' => 'client',
-                'is_primary' => true,
+            $hasAddress = collect($addressData)->filter()->isNotEmpty();
 
-                'addressable_id' => $client->id,
-                'addressable_type' => 'client',
-            ]);
+            if ($hasAddress) {
+                Address::create([
+                    ...$addressData,
 
+                    'country_id' => $country?->id,
+                    'state_id' => $state?->id,
+
+                    'address_type' => 'client',
+                    'is_primary' => true,
+
+                    'addressable_id' => $client->id,
+                    'addressable_type' => 'client',
+                ]);
+            }
             DB::commit();
 
             return $client;
@@ -72,9 +82,9 @@ class ClientService implements ClientServiceInterface
         return $record->fresh();
     }
 
-    public function delete(int $id): bool
+    public function delete(string $pan): bool
     {
-        $record = Client::findOrFail($id);
+        $record = Client::where('pan', $pan)->firstOrFail();
         return $record->delete();
     }
 }

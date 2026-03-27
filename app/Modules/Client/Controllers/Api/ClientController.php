@@ -33,23 +33,23 @@ class ClientController extends Controller
     public function store(ClientRequest $request): SuccessResource
     {
         $data = $this->service->store($request->validated());
-       return  new ClientResource($data, $messages='Client created successfully');
+        return  new ClientResource($data, $messages = 'Client created successfully');
     }
 
     public function update(ClientRequest $request, int $id): SuccessResource
     {
         $data = $this->service->update($request->validated(), $id);
-        return  new ClientResource($data, $messages='Client updated successfully');
+        return  new ClientResource($data, $messages = 'Client updated successfully');
     }
 
-        public function destroy(int $id): JsonResponse
+    public function destroy(string $pan): JsonResponse
     {
 
-        $result=$this->service->delete($id);
+        $result = $this->service->delete($pan);
         return new JsonResponse([
             'status' => $result,
             'code' => 204,
-            'message' => $result?'Client deleted successfully':'Client not found',
+            'message' => $result ? 'Client deleted successfully' : 'Client not found',
         ]);
     }
 }
