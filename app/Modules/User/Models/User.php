@@ -2,12 +2,13 @@
 
 namespace App\Modules\User\Models;
 
-use App\Modules\Client\Models\Client;
 use App\Modules\Role\Models\Role;
-
+use App\Modules\UserFiscalYear\Models\UserFiscalYear;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,44 +17,18 @@ class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'username',
         'user_type',
         'password',
-        'status',
-        'provider',
-        'provider_id',
-        'email_verified_at'
+        'status'
     ];
-    protected $connection;
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->connection = env('DB_CONNECTION', 'mysql');
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -62,10 +37,32 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function user_fiscal_year(): HasOne
+    {
+        return $this->hasOne(UserFiscalYear::class, 'user_id', 'id');
+    }
+    public function current_fiscal_year(): ?UserFiscalYear
+    {
+        return $this->user_fiscal_year()->first();
+    }
+    public function fiscal_years(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            'App\Modules\FiscalYear\Models\FiscalYear',
+            'user_fiscal_years',
+            'user_id',
+            'fiscal_year_id'
+        );
+    }
+    public function user_roles(): HasMany
+    {
+        return $this->hasMany('App\Modules\UserRole\Models\UserRole', 'user_id', 'id');
+    }
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id');
     }
+
 
     // Helper: Check if user has a specific role
     public function hasRole(string $roleName): bool
@@ -86,28 +83,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->morphTo();
     }
-    /**
 
-        Get the identifier that will be stored in the subject claim of the JWT.
-        @return mixed
-    */
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
-
-    /**
-
-    Return a key value array, containing any custom claims to be added to the JWT.
-    @return array
-    */
     public function getJWTCustomClaims(): array
     {
         return [];
-    }
-
-    public function clients(): HasMany
-    {
-        return $this->hasMany(Client::class, 'user_id', 'id');
     }
 }

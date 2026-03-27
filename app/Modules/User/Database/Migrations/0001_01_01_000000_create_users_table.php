@@ -18,16 +18,24 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->string('provider')->nullable();
-            $table->string('provider_id')->nullable();
             $table->rememberToken();
-            $table->unsignedBigInteger('userable_id')->default(0);
-            $table->string('userable_type')->default('member');
+            $table->unsignedBigInteger('userable_id')->nullable();
+            $table->string('userable_type')->default('employee');
             $table->string('status')->default('active');
+            // SOCIALITE FIELDS (add these)
+            $table->string('provider')->nullable();        // 'password', 'google', 'github', 'apple'
+            $table->string('provider_id')->nullable()->unique(); // Google ID, GitHub ID, etc.
+            $table->string('avatar')->nullable();
+            $table->text('provider_token')->nullable();         // encrypted if you store it
+            $table->text('provider_refresh_token')->nullable();
+
             $table->timestamps();
 
+            // Indexes
             $table->index(['userable_id', 'userable_type']);
+            $table->unique(['provider', 'provider_id']); // crucial!
         });
+
 
     }
 
