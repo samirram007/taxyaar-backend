@@ -68,6 +68,60 @@ class AuthController extends Controller
         return $this->respondWithToken($token, 'Login successful!');
 
     }
+
+    public function googleLogin(\Illuminate\Http\Request $request): JsonResponse
+    {
+        try {
+            $token = $request->input('access_token');
+            if (!$token) {
+                return response()->json(['status' => 'error', 'message' => 'Token required'], 400);
+            }
+
+            $googleData = $this->decodeGoogleToken($token);
+            if (!$googleData) {
+                return response()->json(['status' => 'error', 'message' => 'Invalid token'], 401);
+            }
+
+            $user = $this->userService->findByProvider('google', $googleData['sub']);
+
+            // If NOT exists, create new user
+            if (!$user) {
+                $user = $this->userService->store([
+                    'name' => $googleData['name'] ?? '',
+                    'email' => $googleData['email'],
+                    'username' => explode('@', $googleData['email'])[0],
+                    'provider' => 'google',
+                    'provider_id' => $googleData['sub'],
+                    'user_type' => 'user',
+                    'status' => 'active',
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]);
+            }
+
+            $jwtToken = $this->authService->loginWithUser($user);
+            return $this->respondWithToken($jwtToken, 'Google login successful!');
+        } catch (\Exception $e) {
+            Log::error('Google login: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Authentication failed'], 401);
+        }
+    }
+
+    //rn using manual decoding not socialite(will work later on)
+    private function decodeGoogleToken(string $token): ?array
+    {
+        try {
+            $parts = explode('.', $token);
+            if (count($parts) !== 3)
+                return null;
+
+            $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+            return isset($payload['sub'], $payload['email']) ? $payload : null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function socialCallback(string $provider)
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();

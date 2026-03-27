@@ -33,6 +33,23 @@ class UserService implements UserServiceInterface
             ->first();
 
         if ($user) {
+            return $user;
+        }
+
+        $user = User::where('email', $socialUser->getEmail())->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                'email' => $socialUser->getEmail(),
+                'provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+                'username' => $socialUser->getNickname() ?? explode('@', $socialUser->getEmail())[0],
+                'user_type' => 'user',
+                'status' => 'active',
+                'password' => bcrypt(Str::random(16)),
+            ]);
+        } else {
             // Update avatar/name in case they changed it
             $user->update([
                 'name' => $socialUser->getName() ?? $socialUser->getNickname(),
@@ -62,6 +79,8 @@ class UserService implements UserServiceInterface
             'email' => $socialUser->getEmail(),
             'provider' => $provider,
             'provider_id' => $socialUser->getId(),
+            'username' => $socialUser->getNickname() ?? explode('@', $socialUser->getEmail())[0],
+            'user_type' => 'user',
             'avatar' => $socialUser->getAvatar(),
             'password' => bcrypt(Str::random(32)),
             'email_verified_at' => $socialUser->getEmail() ? now() : null,

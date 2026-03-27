@@ -44,12 +44,15 @@ class AuthService implements AuthServiceInterface
 
     public function register($data): string
     {
-
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'username' => explode('@', $data['email'])[0],
             'password' => Hash::make($data['password']),
+            'user_type' => 'user', 
+            'status' => 'active', 
+            'provider' => 'password',
+            'email_verified_at' => now(), 
         ]);
 
         $token = Auth::attempt($data);
@@ -70,11 +73,7 @@ class AuthService implements AuthServiceInterface
         } catch (\Exception $e) {
             //return response()->json(['error' => 'Failed to logout, token not found or already invalid'], 400);
             throw new \Exception("Error Processing Request", 1);
-
-
         }
-
-
     }
     public function refresh(): string
     {
@@ -118,5 +117,4 @@ class AuthService implements AuthServiceInterface
         $user->password = Hash::make($newPassword);
         $user->save();
     }
-
 }
