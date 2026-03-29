@@ -31,7 +31,7 @@ class TicketMasterRequest extends FormRequest
             'platform' => ['sometimes', 'required', new Enum(DevicePlatform::class)],
             'subject' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['sometimes', 'required', 'string'],
-            'file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,xls,xlsx,csv,doc,docx,txt'],
+            'file' => ['nullable', 'file', 'mimetypes:application/pdf,image/jpeg,image/png,text/plain'],
         ];
 
         // For update requests, make validation more flexible

@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('ticket_masters', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("ticket_id")->unique(); // this can be called as reference number
+            $table->string("ticket_id")->unique(); // this can be called as reference number
             $table->enum('assigned_by', ['employee', 'system', 'agent_1', 'agent_2'])->default('system');
             $table->unsignedBigInteger('assigned_by_id')->nullable();
             $table->unsignedBigInteger('assigned_to')->nullable();

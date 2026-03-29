@@ -7,7 +7,6 @@ enum DocumentTypeEnum: string
     case JPG = 'jpg';
     case JPEG = 'jpeg';
     case PNG = 'png';
-    case GIF = 'gif';
     case WEBP = 'webp';
     case XLS = 'xls';
     case XLSX = 'xlsx';
@@ -15,6 +14,7 @@ enum DocumentTypeEnum: string
     case DOC = 'doc';
     case DOCX = 'docx';
     case TXT = 'txt';
+    case PDF = 'pdf';
 
     public static function getValues(): array
     {

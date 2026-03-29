@@ -2,13 +2,19 @@
 
 namespace App\Modules\TicketMaster\Services;
 
+use App\Modules\Document\Contracts\DocumentServiceInterface;
 use App\Modules\TicketMaster\Contracts\TicketMasterServiceInterface;
 use App\Modules\TicketMaster\Models\TicketMaster;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class TicketMasterService implements TicketMasterServiceInterface
 {
     protected $resource = [];
+
+    public function __construct(
+        protected DocumentServiceInterface $documentService
+    ) {}
 
     public function getAll(): Collection
     {
@@ -22,20 +28,35 @@ class TicketMasterService implements TicketMasterServiceInterface
 
     public function store(array $data): TicketMaster
     {
-        $data['ticket_id'] = 1;
-        return TicketMaster::create($data);
+        return DB::transaction(function () use ($data) {
+
+            $pan  = $data['pan'];
+            $data['ticket_id'] = $this->generateTicketId($pan);
+
+            $file = $data['file'] ?? null;
+            unset($data['file']);
+
+            $ticket = TicketMaster::create($data);
+
+            if ($file) {
+                $this->documentService->store([
+                    'file' => $file,
+                    'documentable_id' => $ticket->id,
+                    'documentable_type' => TicketMaster::class,
+                ]);
+            }
+
+            return $ticket;
+        });
     }
 
 
-    private function generateTicketId(string $pan, string $mobileNumber): string
+    private function generateTicketId(string $pan): string
     {
-        $epoch = now()->timestamp;
-        $rand = mt_rand(100, 999);
+        $panPart = strtoupper(substr($pan, 0, 5));
+        $epochSeconds = now()->timestamp;
 
-        return strtoupper(substr($pan, 0, 5)) .
-            substr($mobileNumber, -4) .
-            $epoch .
-            $rand;
+        return $panPart . $epochSeconds;
     }
 
     public function update(array $data, int $id): TicketMaster
