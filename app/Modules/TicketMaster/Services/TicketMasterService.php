@@ -5,6 +5,7 @@ namespace App\Modules\TicketMaster\Services;
 use App\Modules\Document\Contracts\DocumentServiceInterface;
 use App\Modules\TicketMaster\Contracts\TicketMasterServiceInterface;
 use App\Modules\TicketMaster\Models\TicketMaster;
+use App\Modules\TicketStatus\Models\TicketStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,7 @@ class TicketMasterService implements TicketMasterServiceInterface
 
             $pan  = $data['pan'];
             $data['ticket_id'] = $this->generateTicketId($pan);
+            $data['status_id'] = TicketStatus::where('code', 'open')->value('id');
 
             $file = $data['file'] ?? null;
             unset($data['file']);

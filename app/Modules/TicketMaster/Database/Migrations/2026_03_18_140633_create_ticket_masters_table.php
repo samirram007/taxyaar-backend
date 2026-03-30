@@ -16,9 +16,9 @@ return new class extends Migration
             $table->enum('assigned_by', ['employee', 'system', 'agent_1', 'agent_2'])->default('system');
             $table->unsignedBigInteger('assigned_by_id')->nullable();
             $table->unsignedBigInteger('assigned_to')->nullable();
-            $table->unsignedBigInteger("type_id")->nullable();
+            $table->unsignedBigInteger("type_id");
             $table->unsignedBigInteger("priority_id")->nullable();
-            $table->unsignedBigInteger("status_id")->nullable();
+            $table->unsignedBigInteger("status_id");
             // these are for when ticket status will be on hold
             $table->date("paused_at")->nullable();
             $table->string("paused_duration")->nullable();

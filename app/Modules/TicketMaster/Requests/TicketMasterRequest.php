@@ -18,7 +18,7 @@ class TicketMasterRequest extends FormRequest
     {
         $rules = [
             'mobile_number' => ['required', 'string', 'max:20'],
-            'ticket_type_id' => ['required', 'numeric'],
+            'type_id' => ['required', 'numeric'],
             'priority_id' => ['nullable', 'numeric'],
             'status_id' => ['nullable', 'numeric'],
             'assigned_by' => ['sometimes', 'required', 'string'],
