@@ -11,5 +11,5 @@ interface ClientServiceInterface
     public function getById(int $id): ?Client;
     public function store(array $data): Client;
     public function update(array $data, int $id): Client;
-    public function delete(int $id): bool;
+    public function delete(string $pan): bool;
 }

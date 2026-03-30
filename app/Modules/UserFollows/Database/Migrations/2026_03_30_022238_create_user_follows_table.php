@@ -8,18 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ticket_event_types', function (Blueprint $table) {
+        Schema::create('user_follows', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('parent_id');
+            $table->string('code')->unique();
             $table->string('description')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->string('status')->default('active');
+            $table->string('icon')->nullable();
+
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('ticket_event_types');
+        Schema::dropIfExists('user_follows');
     }
 };

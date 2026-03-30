@@ -20,12 +20,21 @@ class TicketStatusSeeder extends Seeder
                 'color_code' => '#6c757d',
             ],
             [
+                'name' => 'AWAITING YOUR REPLY',
+                'code' => 'awaiting_reply',
+                'description' => 'Waiting for customer response',
+                'is_active' => true,
+                'is_public' => true,
+                'display_order' => 2,
+                'color_code' => '#ffc107',
+            ],
+            [
                 'name' => 'ASSIGNED',
                 'code' => 'assigned',
                 'description' => 'Owner decided, work not started',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 2,
+                'display_order' => 3,
                 'color_code' => '#0d6efd',
             ],
             [
@@ -34,7 +43,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Actively being worked',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 3,
+                'display_order' => 4,
                 'color_code' => '#0dcaf0',
             ],
             [
@@ -43,7 +52,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Blocked by user input or documents',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 4,
+                'display_order' => 5,
                 'color_code' => '#ffc107',
             ],
             [
@@ -52,7 +61,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Blocked by internal team or system',
                 'is_active' => true,
                 'is_public' => false,
-                'display_order' => 5,
+                'display_order' => 6,
                 'color_code' => '#fd7e14',
             ],
             [
@@ -61,7 +70,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Paused, no immediate action expected',
                 'is_active' => true,
                 'is_public' => false,
-                'display_order' => 6,
+                'display_order' => 7,
                 'color_code' => '#adb5bd',
             ],
             [
@@ -70,7 +79,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Raised to higher level',
                 'is_active' => true,
                 'is_public' => false,
-                'display_order' => 7,
+                'display_order' => 8,
                 'color_code' => '#dc3545',
             ],
             [
@@ -79,7 +88,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Solution provided',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 8,
+                'display_order' => 9,
                 'color_code' => '#198754',
             ],
             [
@@ -88,7 +97,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Finished, no further action',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 9,
+                'display_order' => 10,
                 'color_code' => '#212529',
             ],
             [
@@ -97,7 +106,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Customer not satisfied / issue persists',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 10,
+                'display_order' => 11,
                 'color_code' => '#6610f2',
             ],
             [
@@ -106,7 +115,7 @@ class TicketStatusSeeder extends Seeder
                 'description' => 'Invalid or withdrawn',
                 'is_active' => true,
                 'is_public' => true,
-                'display_order' => 11,
+                'display_order' => 12,
                 'color_code' => '#6c757d',
             ],
         ];

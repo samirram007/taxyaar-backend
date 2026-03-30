@@ -18,7 +18,7 @@ class TicketMasterRequest extends FormRequest
     {
         $rules = [
             'mobile_number' => ['required', 'string', 'max:20'],
-            'ticket_type_id' => ['required', 'numeric'],
+            'type_id' => ['required', 'numeric'],
             'priority_id' => ['nullable', 'numeric'],
             'status_id' => ['nullable', 'numeric'],
             'assigned_by' => ['sometimes', 'required', 'string'],
@@ -31,7 +31,7 @@ class TicketMasterRequest extends FormRequest
             'platform' => ['sometimes', 'required', new Enum(DevicePlatform::class)],
             'subject' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['sometimes', 'required', 'string'],
-            'file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp,xls,xlsx,csv,doc,docx,txt'],
+            'file' => ['nullable', 'file', 'mimetypes:application/pdf,image/jpeg,image/png,text/plain'],
         ];
 
         // For update requests, make validation more flexible
