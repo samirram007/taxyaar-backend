@@ -13,7 +13,6 @@ use App\Modules\User\Resources\UserResource;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -25,10 +24,9 @@ class AuthController extends Controller
         protected AuthServiceInterface $authService,
         protected UserServiceInterface $userService
     ) {
-        // dd(config('session.domain'));
         $this->domain = config('session.domain');
-
-        $this->token_expire_duration = config('session.lifetime') * 60; // Convert minutes to seconds
+        // $this->token_expire_duration = env('TOKEN_EXPIRE_DURATION', 30000);
+        $this->token_expire_duration = config('session.lifetime') * 60;
     }
     /**
      * @OA\Post(
@@ -67,7 +65,6 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $token = $this->authService->login($request->validated());
-
         return $this->respondWithToken($token, 'Login successful!');
 
     }
@@ -224,47 +221,9 @@ class AuthController extends Controller
 
     }
 
-
-    public function testGoogleLogin(): JsonResponse
-    {
-        try {
-            $googleData = [
-                'sub' => '123456789',
-                'name' => 'Test User',
-                'email' => 'testuser@gmail.com'
-            ];
-
-            $user = $this->userService->findByProvider('google', $googleData['sub']);
-            if (!$user) {
-                $user = $this->userService->store([
-                    'name' => $googleData['name'],
-                    'email' => $googleData['email'],
-                    'provider' => 'google',
-                    'provider_id' => $googleData['sub'],
-                    'user_type' => 'user',
-                    'status' => 'active',
-                    'email_verified_at' => now(),
-                    'password' => bcrypt(Str::random(16)),
-                ]);
-            }
-
-            $token = $this->authService->loginWithUser($user);
-            return $this->respondWithToken($token, 'Test Google login successful!');
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'code' => 400
-            ], 400);
-        }
-    }
-
     protected function respondWithToken(string $token, string $message = 'Authenticated successfully!')
     {
-        // Log::info(
-        //     'AuthService initialized response',
-        //     ['domain' => $this->domain, 'token_expire_duration' => $this->token_expire_duration, 'token' => $token]
-        // );
+
         $cookie = cookie(
             'token',
             $token,
