@@ -27,7 +27,7 @@ class TicketStatus extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-        'is_acitve' => 'boolean',
+        'is_active' => 'boolean',
         'is_public' => 'boolean',
         'display_order' => 'integer'
     ];

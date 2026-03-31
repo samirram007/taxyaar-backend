@@ -13,6 +13,7 @@ class TicketStatusResource extends SuccessResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'code' => $this->code,
             'description' => $this->description,
             'isActive' => $this->is_active,
             'isPublic' => $this->is_public,
