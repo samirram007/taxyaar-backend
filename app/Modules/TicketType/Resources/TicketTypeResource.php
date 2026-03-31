@@ -13,6 +13,9 @@ class TicketTypeResource extends SuccessResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'code' => $this->code,
+            'status' => $this->status,
+            'description' => $this->description
         ];
     }
 }
