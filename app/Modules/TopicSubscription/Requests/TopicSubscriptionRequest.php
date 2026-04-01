@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\ArticleComments\Requests;
+namespace App\Modules\TopicSubscription\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ArticleCommentsRequest extends FormRequest
+class TopicSubscriptionRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,17 +14,17 @@ class ArticleCommentsRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:article_comments,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:article_comments,code'],
+            'name' => ['required', 'string', 'max:255','unique:topic_subscriptions,name'],
+            'code' => ['sometimes','required', 'string', 'max:255','unique:topic_subscriptions,code'],
             'description' => ['sometimes','required', 'string', 'max:255'],
             'status' => ['sometimes','required', 'string', 'max:255'],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('article_comments');
-            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:article_comments,name,' . $id,];
-            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:article_comments,code,' . $id,];
+            $id=$this->route('topic_subscription');
+            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_subscriptions,name,' . $id,];
+            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_subscriptions,code,' . $id,];
 
         }
 

@@ -2,13 +2,15 @@
 
 namespace App\Modules\TopicComment\Services;
 
+use App\Modules\TopicArticle\Models\TopicArticle;
 use App\Modules\TopicComment\Contracts\TopicCommentServiceInterface;
 use App\Modules\TopicComment\Models\TopicComment;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class TopicCommentService implements TopicCommentServiceInterface
 {
-    protected $resource=[];
+    protected $resource = [];
 
     public function getAll(): Collection
     {
@@ -22,6 +24,8 @@ class TopicCommentService implements TopicCommentServiceInterface
 
     public function store(array $data): TopicComment
     {
+        $data['user_id'] = Auth::id();
+        $data['commentable_type'] = 'article';
         return TopicComment::create($data);
     }
 

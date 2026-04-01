@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Modules\ArticleComments\Tests\Feature;
+namespace App\Modules\TopicSubscription\Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Modules\ArticleComments\Models\ArticleComments;
+use App\Modules\TopicSubscription\Models\TopicSubscription;
 
-class ArticleCommentsTest extends TestCase
+class TopicSubscriptionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_list_article_comments(): void
+    public function test_can_list_topic_subscriptions(): void
     {
-        $response = $this->getJson('/api/article_comments');
+        $response = $this->getJson('/api/topic_subscriptions');
         $response->assertStatus(200)
                  ->assertJsonStructure([
                      'data',
@@ -22,11 +22,11 @@ class ArticleCommentsTest extends TestCase
                  ]);
     }
 
-    public function test_can_create_ArticleComments(): void
+    public function test_can_create_TopicSubscription(): void
     {
-        $data = ['name' => 'Test ArticleComments'];
+        $data = ['name' => 'Test TopicSubscription'];
 
-        $response = $this->postJson('/api/article_comments', $data);
+        $response = $this->postJson('/api/topic_subscriptions', $data);
         $response->assertStatus(201)
                  ->assertJsonStructure([
                      'data',
@@ -35,14 +35,14 @@ class ArticleCommentsTest extends TestCase
                      'message'
                  ]);
 
-        $this->assertDatabaseHas('article_comments', $data);
+        $this->assertDatabaseHas('topic_subscriptions', $data);
     }
 
-    public function test_can_show_ArticleComments(): void
+    public function test_can_show_TopicSubscription(): void
     {
-        $ArticleComments = ArticleComments::factory()->create();
+        $TopicSubscription = TopicSubscription::factory()->create();
 
-        $response = $this->getJson('/api/article_comments/' . $ArticleComments->id);
+        $response = $this->getJson('/api/topic_subscriptions/' . $TopicSubscription->id);
         $response->assertStatus(200)
                  ->assertJsonStructure([
                      'data' => [
@@ -57,12 +57,12 @@ class ArticleCommentsTest extends TestCase
                  ]);
     }
 
-    public function test_can_update_ArticleComments(): void
+    public function test_can_update_TopicSubscription(): void
     {
-        $ArticleComments = ArticleComments::factory()->create();
-        $data = ['name' => 'Updated ArticleComments'];
+        $TopicSubscription = TopicSubscription::factory()->create();
+        $data = ['name' => 'Updated TopicSubscription'];
 
-        $response = $this->putJson('/api/article_comments/' . $ArticleComments->id, $data);
+        $response = $this->putJson('/api/topic_subscriptions/' . $TopicSubscription->id, $data);
         $response->assertStatus(200)
                  ->assertJsonStructure([
                      'data',
@@ -71,14 +71,14 @@ class ArticleCommentsTest extends TestCase
                      'message'
                  ]);
 
-        $this->assertDatabaseHas('article_comments', $data);
+        $this->assertDatabaseHas('topic_subscriptions', $data);
     }
 
-    public function test_can_delete_ArticleComments(): void
+    public function test_can_delete_TopicSubscription(): void
     {
-        $ArticleComments = ArticleComments::factory()->create();
+        $TopicSubscription = TopicSubscription::factory()->create();
 
-        $response = $this->deleteJson('/api/article_comments/' . $ArticleComments->id);
+        $response = $this->deleteJson('/api/topic_subscriptions/' . $TopicSubscription->id);
         $response->assertStatus(200)
                  ->assertJsonStructure([
                      'status',
@@ -86,12 +86,12 @@ class ArticleCommentsTest extends TestCase
                      'message'
                  ]);
 
-        $this->assertDatabaseMissing('article_comments', ['id' => $ArticleComments->id]);
+        $this->assertDatabaseMissing('topic_subscriptions', ['id' => $TopicSubscription->id]);
     }
 
     public function test_validation_errors_on_create(): void
     {
-        $response = $this->postJson('/api/article_comments', []);
+        $response = $this->postJson('/api/topic_subscriptions', []);
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['name']);
     }

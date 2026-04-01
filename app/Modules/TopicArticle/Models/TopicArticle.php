@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Modules\TopicArticle\Models;
 
 use App\Modules\RelatedArticle\Models\RelatedArticle;
 use App\Modules\TopicCategory\Models\TopicCategory;
+use App\Modules\TopicComment\Models\TopicComment;
 use App\Modules\TopicSection\Models\TopicSection;
 use App\Modules\User\Models\User;
 use App\Traits\Blameable;
@@ -88,4 +90,8 @@ class TopicArticle extends Model
     //     return $this->belongsTo(User::class, 'updated_by', 'id');
     // }
 
+    public function comments()
+    {
+        return $this->morphMany(TopicComment::class, 'commentable');
+    }
 }

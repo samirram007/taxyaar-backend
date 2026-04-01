@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\ArticleComments\Resources;
+namespace App\Modules\TopicSubscription\Resources;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\SuccessCollection;
 
-class ArticleCommentsCollection extends SuccessCollection
+class TopicSubscriptionCollection extends SuccessCollection
 {
 
          /**

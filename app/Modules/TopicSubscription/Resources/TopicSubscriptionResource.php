@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Modules\ArticleComments\Resources;
+namespace App\Modules\TopicSubscription\Resources;
 
 use Illuminate\Http\Request;
 
 use App\Http\Resources\SuccessResource;
-class ArticleCommentsResource extends SuccessResource
+
+class TopicSubscriptionResource extends SuccessResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
 }

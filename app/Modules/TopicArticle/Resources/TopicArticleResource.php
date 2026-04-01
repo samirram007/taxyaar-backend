@@ -9,6 +9,8 @@ use App\Modules\User\Resources\UserResource;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\SuccessResource;
+use App\Modules\TopicComment\Resources\TopicCommentResource;
+
 class TopicArticleResource extends SuccessResource
 {
     public function toArray(Request $request): array
@@ -24,6 +26,9 @@ class TopicArticleResource extends SuccessResource
             'topicSectionId' => $this->topic_section_id,
             'authorId' => $this->author_id,
             'publishedAt' => $this->published_at,
+            'comments' => TopicCommentResource::collection(
+                $this->whenLoaded('comments')
+            ),
             'topicSection' => TopicSectionResource::make($this->whenLoaded('topic_section')),
             'topicCategory' => TopicCategoryResource::make($this->whenLoaded('topic_category')),
             'relatedArticles' => TopicArticleMinimumResource::collection($this->whenLoaded('relatedArticles')),

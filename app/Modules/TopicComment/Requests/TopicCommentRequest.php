@@ -14,18 +14,15 @@ class TopicCommentRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255','unique:topic_comments,name'],
-            'code' => ['sometimes','required', 'string', 'max:255','unique:topic_comments,code'],
-            'description' => ['sometimes','required', 'string', 'max:255'],
-            'status' => ['sometimes','required', 'string', 'max:255'],
+            'comment' => ['required', 'string'],
+            'article_id' => ['required', 'numeric'],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $id=$this->route('topic_comment');
+            $id = $this->route('topic_comment');
             $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_comments,name,' . $id,];
             $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:topic_comments,code,' . $id,];
-
         }
 
         return $rules;

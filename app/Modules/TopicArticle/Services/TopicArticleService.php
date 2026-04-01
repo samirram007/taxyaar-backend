@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TopicArticleService implements TopicArticleServiceInterface
 {
-    protected $resource = ['topic_section.topic_category', 'creator', 'updater'];
+    protected $resource = ['topic_section.topic_category', 'creator', 'updater', 'comments'];
 
     public function getAll(): Collection
     {
@@ -22,7 +22,7 @@ class TopicArticleService implements TopicArticleServiceInterface
     }
     public function getBySlug(string $slug): ?TopicArticle
     {
-        $localResource = ['topic_section.topic_category', 'relatedArticles', 'creator', 'updater'];
+        $localResource = ['topic_section.topic_category', 'relatedArticles', 'creator', 'updater', 'comments'];
         return TopicArticle::with($localResource)->where('slug', $slug)->firstOrFail();
     }
 

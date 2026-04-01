@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Modules\ArticleComments\Providers;
+namespace App\Modules\TopicSubscription\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use App\Modules\ArticleComments\Contracts\ArticleCommentsServiceInterface;
-use App\Modules\ArticleComments\Services\ArticleCommentsService;
+use App\Modules\TopicSubscription\Contracts\TopicSubscriptionServiceInterface;
+use App\Modules\TopicSubscription\Services\TopicSubscriptionService;
 
-class ArticleCommentsServiceProvider extends ServiceProvider
+class TopicSubscriptionServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(ArticleCommentsServiceInterface::class, ArticleCommentsService::class);
+        $this->app->bind(TopicSubscriptionServiceInterface::class, TopicSubscriptionService::class);
     }
 
     public function boot(): void
