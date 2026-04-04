@@ -17,7 +17,7 @@ class AuthService implements AuthServiceInterface
     public function login(array $credentials): string
     {
         $token = Auth::attempt($credentials);
-        //dd($token);
+
         if (!$token) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
@@ -44,12 +44,15 @@ class AuthService implements AuthServiceInterface
 
     public function register($data): string
     {
-
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'username' => explode('@', $data['email'])[0],
             'password' => Hash::make($data['password']),
+            'user_type' => 'user', 
+            'status' => 'active', 
+            'provider' => 'password',
+            'email_verified_at' => now(), 
         ]);
 
         $token = Auth::attempt($data);
@@ -89,11 +92,29 @@ class AuthService implements AuthServiceInterface
 
     public function profile(): User
     {
-        // dd(auth());
-        if (!$user = Auth::user()) {
+
+        $user = Auth::user();
+        if (!$user) {
+            throw new AuthenticationException('Unauthenticated.');
+        }
+        // dd($user->load('roles.permissions')->toArray());
+        return $user->load('roles.permissions.feature', 'user_fiscal_year.fiscal_year');
+    }
+    public function changePassword(array $data): void
+    {
+        $user = Auth::user();
+        if (!$user) {
             throw new AuthenticationException('Unauthenticated.');
         }
 
-        return $user;
+        $newPassword = $data['new_password'] ?? null;
+        if (!$newPassword) {
+            throw ValidationException::withMessages([
+                'new_password' => ['New password is required.'],
+            ]);
+        }
+
+        $user->password = Hash::make($newPassword);
+        $user->save();
     }
 }
