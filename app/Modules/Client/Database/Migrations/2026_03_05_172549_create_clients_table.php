@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id');
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
+            $table->string('pan')->unique();
             $table->string('email')->unique();
             $table->string('last_name');
             $table->string('father_name');
@@ -24,7 +25,6 @@ return new class extends Migration {
             // $table->enum('priEmailRelationId',PrimaryMobileBelongEnum::getValues());
             $table->boolean("is_verified")->default(false);
             $table->date("valid_upto")->nullable();
-            $table->string('pan');
             $table->string('pin_code')->nullable();
             $table->string('zip_code')->nullable();
             $table->string("country_code")->nullable();

@@ -4,10 +4,10 @@ namespace App\Modules\User\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\User\Contracts\UserServiceInterface;
+use App\Modules\User\Requests\UserPasswordRequest;
 use App\Modules\User\Resources\UserResource;
 use App\Modules\User\Resources\UserCollection;
 use App\Modules\User\Requests\UserRequest;
-use App\Http\Resources\SuccessResource;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
@@ -15,9 +15,7 @@ class UserController extends Controller
 {
     use ApiResponseTrait;
 
-    public function __construct(protected UserServiceInterface $service)
-    {
-    }
+    public function __construct(protected UserServiceInterface $service) {}
 
     public function index(): JsonResponse
     {

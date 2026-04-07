@@ -20,9 +20,9 @@ class ClientService implements ClientServiceInterface
         return Client::with($this->resource)->get();
     }
 
-    public function getById(int $id): ?Client
+    public function getById(string $pan): ?Client
     {
-        return Client::with($this->resource)->findOrFail($id);
+        return Client::where('pan', $pan)->firstOrFail();
     }
 
     public function store(array $data): Client
@@ -38,8 +38,10 @@ class ClientService implements ClientServiceInterface
                 : null;
 
             $state = !empty($data['state_cd'])
-                ? State::where('state_code', $data['state_cd'])->first()
+                ? State::where('gst_code', $data['state_cd'])->first()
                 : null;
+
+
 
             $addressData = [
                 'line1' => $data['address_line_1'] ?? null,
@@ -48,6 +50,15 @@ class ClientService implements ClientServiceInterface
                 'city' => $data['address_line_4'] ?? null,
                 'post_office' => $data['address_line_5'] ?? null,
                 'postal_code' => $data['pin_cd'] ?? null,
+
+                'country_id' => $country?->id,
+                'state_id' => $state?->id,
+
+                'address_type' => 'client',
+                'is_primary' => true,
+
+                'addressable_id' => $client->id,
+                'addressable_type' => 'client',
             ];
 
             $hasAddress = collect($addressData)->filter()->isNotEmpty();
@@ -75,9 +86,10 @@ class ClientService implements ClientServiceInterface
         }
     }
 
-    public function update(array $data, int $id): Client
+    public function update(array $data, string $pan): Client
     {
-        $record = Client::findOrFail($id);
+
+        $record = Client::where('pan', $pan)->firstOrFail();
         $record->update($data);
         return $record->fresh();
     }

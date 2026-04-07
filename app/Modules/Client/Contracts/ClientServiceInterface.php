@@ -8,8 +8,8 @@ use App\Modules\Client\Models\Client;
 interface ClientServiceInterface
 {
     public function getAll(): Collection;
-    public function getById(int $id): ?Client;
+    public function getById(string $pan): ?Client;
     public function store(array $data): Client;
-    public function update(array $data, int $id): Client;
+    public function update(array $data, string $pan): Client;
     public function delete(string $pan): bool;
 }

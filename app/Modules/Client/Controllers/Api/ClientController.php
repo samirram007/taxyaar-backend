@@ -24,9 +24,9 @@ class ClientController extends Controller
         return new ClientCollection($data);
     }
 
-    public function show(int $id): SuccessResource
+    public function show(string $pan): SuccessResource
     {
-        $data = $this->service->getById($id);
+        $data = $this->service->getById($pan);
         return  new ClientResource($data);
     }
 
@@ -36,9 +36,9 @@ class ClientController extends Controller
         return  new ClientResource($data, $messages = 'Client created successfully');
     }
 
-    public function update(ClientRequest $request, int $id): SuccessResource
+    public function update(ClientRequest $request, string $pan): SuccessResource
     {
-        $data = $this->service->update($request->validated(), $id);
+        $data = $this->service->update($request->validated(), $pan);
         return  new ClientResource($data, $messages = 'Client updated successfully');
     }
 

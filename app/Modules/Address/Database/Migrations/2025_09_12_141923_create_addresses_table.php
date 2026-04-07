@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->string('city');
 
             // Foreign keys
-            $table->unsignedBigInteger('state_id');
-            $table->unsignedBigInteger('country_id');
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->unsignedBigInteger('country_id')->nullable();
 
             $table->string('postal_code')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();

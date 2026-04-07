@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Modules\Client\Models\Client;
 use App\Modules\TopicArticle\Models\TopicArticle;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -23,7 +24,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
 
-            'article' => TopicArticle::class
+            'article' => TopicArticle::class,
+            'client' => Client::class
         ]);
     }
 }

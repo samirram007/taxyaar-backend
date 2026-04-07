@@ -4,6 +4,7 @@ namespace App\Modules\Client\Requests;
 
 use App\Enums\PrimaryMobileBelongEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class ClientRequest extends FormRequest
@@ -22,8 +23,8 @@ class ClientRequest extends FormRequest
             'father_name' => ['nullable', 'string', 'max:255'],
             'residential_status_cd' => ['nullable', 'string'],
             'isd_cd' => ['nullable', 'string', 'max:3'],
-            'is_verified' => ['nullable', 'boolean'],
-            'valid_upto' => ['nullable', 'date'],
+            // 'is_verified' => ['nullable', 'boolean'],
+            // 'valid_upto' => ['nullable', 'date'],
             'pan' => ['required', 'string', 'unique:clients,pan'],
             'pin_cd' => ['nullable', 'string'],
             'zip_cd' => ['nullable', 'string'],
@@ -34,18 +35,21 @@ class ClientRequest extends FormRequest
             'gender' => ['required', 'string'],
             'email' => ['email', 'required', 'string'],
             'country' => ['sometimes', 'required', 'string'],
-            'address_line_1' => ['sometimes', 'required', 'string', 'max:60'],
-            'address_line_2' => ['sometimes', 'required', 'string', 'max:60'],
-            'address_line_3' => ['sometimes', 'required', 'string', 'max:60'],
-            'address_line_4' => ['sometimes', 'required', 'string', 'max:60'],
-            'address_line_5' => ['sometimes', 'required', 'string', 'max:60'],
+            'line1' => ['sometimes', 'required', 'string', 'max:60'],
+            'landmark' => ['sometimes', 'required', 'string', 'max:60'],
+            'district' => ['sometimes', 'required', 'string', 'max:60'],
+            'city' => ['sometimes', 'required', 'string', 'max:60'],
+            'post_office' => ['sometimes', 'required', 'string', 'max:60'],
         ];
 
         // For update requests, make validation more flexible
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $id = $this->route('client');
-            $rules['name'] = ['sometimes', 'required', 'string', 'max:255', 'unique:clients,name,' . $id,];
-            $rules['code'] = ['sometimes', 'required', 'string', 'max:255', 'unique:clients,code,' . $id,];
+            $rules['pan'] = [
+                'required',
+                'string',
+                Rule::unique('clients', 'pan')->ignore($id, 'pan'),
+            ];
         }
 
         return $rules;

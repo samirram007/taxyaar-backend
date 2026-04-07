@@ -49,10 +49,10 @@ class AuthService implements AuthServiceInterface
             'email' => $data['email'],
             'username' => explode('@', $data['email'])[0],
             'password' => Hash::make($data['password']),
-            'user_type' => 'user', 
-            'status' => 'active', 
+            'user_type' => 'user',
+            'status' => 'active',
             'provider' => 'password',
-            'email_verified_at' => now(), 
+            'email_verified_at' => now(),
         ]);
 
         $token = Auth::attempt($data);
@@ -89,6 +89,7 @@ class AuthService implements AuthServiceInterface
 
         return $token;
     }
+
 
     public function profile(): User
     {

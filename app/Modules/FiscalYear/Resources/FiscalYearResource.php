@@ -6,6 +6,7 @@ use App\Modules\Company\Resources\CompanyResource;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\SuccessResource;
+
 /**
  * @OA\Schema(
  *     schema="FiscalYearResource",
@@ -25,6 +26,7 @@ class FiscalYearResource extends SuccessResource
             'name' => $this->name,
             'startDate' => $this->start_date,
             'endDate' => $this->end_date,
+            'assessmentYear' => $this->assessment_year,
             'companyId' => $this->company_id,
             'company' => new CompanyResource($this->whenLoaded('company')),
             'status' => $this->status
